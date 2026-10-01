@@ -497,15 +497,17 @@ function BotGroup({
   );
 }
 
-// A long project name elides; the branch or machine after it never does, since
-// that is the part you actually navigate by.
+// A long project name elides at a fixed width; the branch or machine after it
+// takes everything left and elides only when it truly runs out. The project
+// never shrinks below its own cap, otherwise a long branch would squeeze it down
+// to a single leftover character instead of showing an ellipsis.
 function ConversationDetail({ thread, projectName }: { thread: PluginSidebarThread; projectName: string | undefined }) {
   const { project, branch } = conversationDetailParts(thread, projectName);
   const label = conversationDetail(thread, projectName);
   if (!project) return <span className="block truncate text-[8px] leading-[10px] text-muted-foreground" title={label}>{label}</span>;
   return <span className="flex min-w-0 items-baseline gap-1 text-[8px] leading-[10px] text-muted-foreground" title={label}>
-    <span className="min-w-0 truncate">{project}</span>
-    {branch ? <><span className="shrink-0">{"\u00b7"}</span><span className="shrink-0 truncate">{branch}</span></> : null}
+    <span className="max-w-[12ch] shrink-0 truncate">{project}</span>
+    {branch ? <><span className="shrink-0">{"\u00b7"}</span><span className="min-w-0 flex-1 truncate">{branch}</span></> : null}
   </span>;
 }
 
